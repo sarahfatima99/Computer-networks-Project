@@ -4,20 +4,144 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="bundle.js"></script>
-    <title>Document</title>
-</head>
-<body>
     
-    <label for="">Your id</label> <br>
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .purple-border textarea {
+    border: 1px solid #ba68c8;
+}
+.purple-border .form-control:focus {
+    border: 1px solid #ba68c8;
+    box-shadow: 0 0 0 0.2rem rgba(186, 104, 200, .25);
+    padding: 7px;
+}
+
+.green-border-focus .form-control:focus {
+    border: 1px solid #ba68c8;
+    box-shadow: 0 0 0 0.2rem rgba(139, 195, 74, .25);
+    padding: 7px;
+}
+body{
+    background-color: black;
+    font:white;
+}
+button{
+    padding: 6px;
+
+}
+textarea{
+    padding:10px;
+}
+.container{
+    padding: 7px;
+}
+.record{
+    border: 1px solid  #ba68c8;
+    box-shadow: 0 0 0 0.2rem rgba(139, 195, 74, .25);
+    width:250px;
+    height: 150px;
+    
+}
+h5{
+    color:skyblue;
+}
+label{
+    color:skyblue;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container ">
+    <div class="form-group purple-border">
+        <label for="exampleFormControlTextarea4">Peer 1</label><br>
+        <textarea class="form-control" id="yourId" cols="3" rows="3"></textarea><br>
+        <label for="exampleFormControlTextarea4">Peer 2</label><br>
+        <textarea class="form-control" id="otherId" cols="3" rows="3"></textarea><br>
+      </div>
+
+      
+      
+    <button type="button" class="btn btn-primary" id="connect">Connect</button><br><br>
+
+    <div class="form-group purple-border">
+        <label for="exampleFormControlTextarea4">Enter Message</label><br>
+        <textarea class="form-control" id="message" cols="3" rows="3"></textarea><br>
+    </div>
+
+    <button type="button" class="btn btn-primary" id="send">Send</button><br>
+
+
+    <!--<label for="">Your id</label> <br>
     <textarea name="" id="yourId" cols="30" rows="10"></textarea><br>
     <label for="">Other id</label> <br>
     <textarea name="" id="otherId" cols="30" rows="10"></textarea><br>
-    <button id="connect">Connect</button> <br>
     <label for="">Enter message</label><br> 
     <textarea name="" id="message" cols="30" rows="10"></textarea><br>
-    <button id="send">Send</button><br>
+    -->
+    
+    <!--<button id="send">Send</button><br>
+    <button id="connect">Connect</button> <br>-->
+    
+<br><br>
+<h5 style="font-weight: bold;">SHARE FILE</h5>
+<label for="formFileMultiple" class="form-label"></label>
+<input class="form-control" type="file" id="formFileMultiple" multiple onChange={this.onChangeHandler}/>
+<br>
+<pre id="fileContent"></pre><br>
+<button type="button" class="btn btn-primary" id="send">Send</button><br>
+<h5 style="font-weight: bold;">Messages send by other person</h5><br>
+    <div class="record">
     <pre id="msg"></pre>
+    <br>
+</div>
+
+<form enctype="multipart/form-data">
+    <input id="upload" type="file"   accept="image" name="files[]" size=30>
+</form>
+    
+<textarea class="form-control" rows=35 cols=120 id="ms_word_filtered_html"></textarea>
+<br>
+<pre id="info"></pre>
+</div>
 </body>
+
+
+<!-- <script> -->
+<!-- // function handleFileSelect(evt) {
+//     var files = evt.target.files; // FileList object
+
+//     // use the 1st file from the list
+//     f = files[0];
+
+//     var reader = new FileReader();
+
+//     // Closure to capture the file information.
+//     reader.onload = (function(theFile) {
+//         return function(e) {
+
+//           jQuery( '#ms_word_filtered_html' ).val( e.target.result );
+//         };
+//       })(f);
+
+//       // Read in the image file as a data URL.
+//       reader.readAsText(f);
+//   }
+
+//   //document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+//   //var doc=document.getElementById('ms_word_filtered_html');
+  
+//     //var s   = fso.CreateTextFile("<your Path>/filename.txt", True);
+//     //s.writeline(doc);
+//     //s.close();
+//  -->
+
 <script src="bundle.js"></script>
 </html>

@@ -2799,7 +2799,7 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
 
   peer.on('connect', () => {
     console.log('I am connected now')
-    peer.send('sending data blah blah')
+
   })
 
   peer.on('signal', function (data) {
@@ -2816,12 +2816,13 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
   document.getElementById('send').addEventListener('click', function () {
     console.log("send button")  
     var yourMessage = document.getElementById('message').value
+    document.getElementById('msg').textContent+="you: "+yourMessage+'\n' 
     peer.send(yourMessage)
   })
 
   peer.on('data', function (data) {
       console.log("data")
-    document.getElementById('msg').textContent += data + '\n'
+    document.getElementById('msg').textContent +="other party: "+ data + '\n'
   })
 
   peer.on('stream', function (stream) {
