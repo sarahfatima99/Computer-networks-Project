@@ -90,28 +90,31 @@ label{
     <!--<button id="send">Send</button><br>
     <button id="connect">Connect</button> <br>-->
     
+ 
+
 <br><br>
-<h5 style="font-weight: bold;">SHARE FILE</h5>
+
+<input id="upload" type="file"   accept="image" name="files[]" size=30>
+<br>
+<button type="button" class="btn btn-primary" id="sendfile">Send file</button><br><br>
+<!-- <h5 style="font-weight: bold;">SHARE FILE</h5>
 <label for="formFileMultiple" class="form-label"></label>
 <input class="form-control" type="file" id="formFileMultiple" multiple onChange={this.onChangeHandler}/>
 <br>
 <pre id="fileContent"></pre><br>
 <button type="button" class="btn btn-primary" id="send">Send</button><br>
-<h5 style="font-weight: bold;">Messages send by other person</h5><br>
-    <div class="record">
-    <pre id="msg"></pre>
-    <br>
-</div>
+
+
 
 <form enctype="multipart/form-data">
-    <input id="upload" type="file"   accept="image" name="files[]" size=30>
+    
 </form>
     
 <textarea class="form-control" rows=35 cols=120 id="ms_word_filtered_html"></textarea>
 <br>
 <pre id="info"></pre>
 </div>
-</body>
+</body> -->
 
 
 <!-- <script> -->
@@ -142,6 +145,11 @@ label{
 //     //s.writeline(doc);
 //     //s.close();
 //  -->
+<h5 style="font-weight: bold;">Messages send by other person</h5><br>
+    <div class="record">
+    <pre id="msg"></pre>
+    <br>
+</div>
 
 <script src="bundle.js"></script>
 </html>

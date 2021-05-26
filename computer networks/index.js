@@ -1,6 +1,6 @@
 
 var getUserMedia = require('getusermedia')
-
+var filee=3
 getUserMedia({ video: true, audio: false }, function (err, stream) {
   if (err) return console.error(err)
 
@@ -13,8 +13,41 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
 
   peer.on('connect', () => {
     console.log('I am connected now')
-
+    
   })
+
+document.getElementById('sendfile').addEventListener('click',function(){
+
+
+console.log("file added")
+const input = document.getElementById('upload')
+file=input.files[0]
+console.log(file)
+filee=1
+console.log(filee)
+file.arrayBuffer().then(buffer => {
+      // Off goes the file!
+      console.log(buffer)
+      peer.send("file"+buffer);
+
+})
+console.log("sentt")
+})
+
+peer.on('data', data => {
+console.log(data)
+
+  // Convert the file back to Blob
+  const file = new Blob([ data ]);
+
+  console.log('Received', file);
+  // Download the received file using downloadjs
+  require("downloadjs")(file, 'test.txt','text/plain')
+
+  
+});
+
+
 
   peer.on('signal', function (data) {
     console.log("signal")
@@ -28,16 +61,25 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
   })
 
   document.getElementById('send').addEventListener('click', function () {
+    filee=0
     console.log("send button")  
     var yourMessage = document.getElementById('message').value
-    document.getElementById('msg').textContent+="you: "+yourMessage+'\n' 
+    document.getElementById('msg').textContent+="you: "+yourMessage+'\n'
+   
     peer.send(yourMessage)
+
+    
   })
 
   peer.on('data', function (data) {
-      console.log("data")
+    console.log("yo")
+    console.log(filee)
+      console.log(data)
     document.getElementById('msg').textContent +="other party: "+ data + '\n'
+    
   })
+
+
 
   peer.on('stream', function (stream) {
       console.log("stream")

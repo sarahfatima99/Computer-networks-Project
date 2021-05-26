@@ -2706,87 +2706,9 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],7:[function(require,module,exports){
-// // var Peer=require("simple-peer")
-// // var peer=new Peer()
-
-// // peer.on('signal',function(data){
-
-// var getusermedia=require("getusermedia")
-
-// var peer=require('simple-peer')
-
-// getusermedia({
-//     video:true,
-//     audio:false
-// },
-// function(err,stream){
-//     if(err) return console.log(err)
-
-// var Peer=new peer({
-// initiator:location.hash==="#init",
-// trickle:false,
-// stream:stream
-// })
-// Peer.on('signal',function(data){
-
-//     console.log(data)
-
-
-//     document.getElementById("yourId").value=JSON.stringify(data)
-
-
-
-
-// })
-
-// document.getElementById("connect").addEventListener('click',function(){
-
-// console.log("button clicked")
-
-// var OtherId=JSON.parse(document.getElementById('otherid').value)
-
-// Peer.signal(OtherId)
-    
-// }) 
-
-
-// document.getElementById('send').addEventListener('click',function(){
-
-// console.log('send button was clicked')
-
-// var yourmsg=document.getElementById('message').value
-// Peer.send(yourmsg)
-
-// })
-
-// Peer.on('data',function(data){
-
-// console.log(data)
-// document.getElementById('message').textContent+=data +"\n"
-
-// })
-
-// }
-
-
-
-// )
-
-// function showWebCam(){
-    
-// const video= document.createElement('video')
-
-// document.body.appendChild(video)
-
-// video.srcObject=stream
-// video.play()
-
-// }
-
-
 
 var getUserMedia = require('getusermedia')
-
+var filee=3
 getUserMedia({ video: true, audio: false }, function (err, stream) {
   if (err) return console.error(err)
 
@@ -2799,8 +2721,41 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
 
   peer.on('connect', () => {
     console.log('I am connected now')
-
+    
   })
+
+document.getElementById('sendfile').addEventListener('click',function(){
+
+
+console.log("file added")
+const input = document.getElementById('upload')
+file=input.files[0]
+console.log(file)
+filee=1
+console.log(filee)
+file.arrayBuffer().then(buffer => {
+      // Off goes the file!
+      console.log(buffer)
+      peer.send("file"+buffer);
+
+})
+console.log("sentt")
+})
+
+peer.on('data', data => {
+console.log(data)
+
+  // Convert the file back to Blob
+  const file = new Blob([ data ]);
+
+  console.log('Received', file);
+  // Download the received file using downloadjs
+  require("downloadjs")(file, 'test.txt','text/plain')
+
+  
+});
+
+
 
   peer.on('signal', function (data) {
     console.log("signal")
@@ -2814,16 +2769,25 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
   })
 
   document.getElementById('send').addEventListener('click', function () {
+    filee=0
     console.log("send button")  
     var yourMessage = document.getElementById('message').value
-    document.getElementById('msg').textContent+="you: "+yourMessage+'\n' 
+    document.getElementById('msg').textContent+="you: "+yourMessage+'\n'
+   
     peer.send(yourMessage)
+
+    
   })
 
   peer.on('data', function (data) {
-      console.log("data")
+    console.log("yo")
+    console.log(filee)
+      console.log(data)
     document.getElementById('msg').textContent +="other party: "+ data + '\n'
+    
   })
+
+
 
   peer.on('stream', function (stream) {
       console.log("stream")
@@ -2834,7 +2798,7 @@ getUserMedia({ video: true, audio: false }, function (err, stream) {
     video.play()
   })
 })
-},{"getusermedia":12,"simple-peer":34}],8:[function(require,module,exports){
+},{"downloadjs":10,"getusermedia":13,"simple-peer":35}],8:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-env browser */
 
@@ -3370,7 +3334,176 @@ function setup(env) {
 
 module.exports = setup;
 
-},{"ms":14}],10:[function(require,module,exports){
+},{"ms":15}],10:[function(require,module,exports){
+//download.js v4.2, by dandavis; 2008-2016. [MIT] see http://danml.com/download.html for tests/usage
+// v1 landed a FF+Chrome compat way of downloading strings to local un-named files, upgraded to use a hidden frame and optional mime
+// v2 added named files via a[download], msSaveBlob, IE (10+) support, and window.URL support for larger+faster saves than dataURLs
+// v3 added dataURL and Blob Input, bind-toggle arity, and legacy dataURL fallback was improved with force-download mime and base64 support. 3.1 improved safari handling.
+// v4 adds AMD/UMD, commonJS, and plain browser support
+// v4.1 adds url download capability via solo URL argument (same domain/CORS only)
+// v4.2 adds semantic variable names, long (over 2MB) dataURL support, and hidden by default temp anchors
+// https://github.com/rndme/download
+
+(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define([], factory);
+	} else if (typeof exports === 'object') {
+		// Node. Does not work with strict CommonJS, but
+		// only CommonJS-like environments that support module.exports,
+		// like Node.
+		module.exports = factory();
+	} else {
+		// Browser globals (root is window)
+		root.download = factory();
+  }
+}(this, function () {
+
+	return function download(data, strFileName, strMimeType) {
+
+		var self = window, // this script is only for browsers anyway...
+			defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
+			mimeType = strMimeType || defaultMime,
+			payload = data,
+			url = !strFileName && !strMimeType && payload,
+			anchor = document.createElement("a"),
+			toString = function(a){return String(a);},
+			myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
+			fileName = strFileName || "download",
+			blob,
+			reader;
+			myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
+	  
+		if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+			payload=[payload, mimeType];
+			mimeType=payload[0];
+			payload=payload[1];
+		}
+
+
+		if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
+			fileName = url.split("/").pop().split("?")[0];
+			anchor.href = url; // assign href prop to temp anchor
+		  	if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
+        		var ajax=new XMLHttpRequest();
+        		ajax.open( "GET", url, true);
+        		ajax.responseType = 'blob';
+        		ajax.onload= function(e){ 
+				  download(e.target.response, fileName, defaultMime);
+				};
+        		setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
+			    return ajax;
+			} // end if valid url?
+		} // end if url?
+
+
+		//go ahead and download dataURLs right away
+		if(/^data:([\w+-]+\/[\w+.-]+)?[,;]/.test(payload)){
+		
+			if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
+				payload=dataUrlToBlob(payload);
+				mimeType=payload.type || defaultMime;
+			}else{			
+				return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+					navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
+					saver(payload) ; // everyone else can save dataURLs un-processed
+			}
+			
+		}else{//not data url, is it a string with special needs?
+			if(/([\x80-\xff])/.test(payload)){			  
+				var i=0, tempUiArr= new Uint8Array(payload.length), mx=tempUiArr.length;
+				for(i;i<mx;++i) tempUiArr[i]= payload.charCodeAt(i);
+			 	payload=new myBlob([tempUiArr], {type: mimeType});
+			}		  
+		}
+		blob = payload instanceof myBlob ?
+			payload :
+			new myBlob([payload], {type: mimeType}) ;
+
+
+		function dataUrlToBlob(strUrl) {
+			var parts= strUrl.split(/[:;,]/),
+			type= parts[1],
+			decoder= parts[2] == "base64" ? atob : decodeURIComponent,
+			binData= decoder( parts.pop() ),
+			mx= binData.length,
+			i= 0,
+			uiArr= new Uint8Array(mx);
+
+			for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
+
+			return new myBlob([uiArr], {type: type});
+		 }
+
+		function saver(url, winMode){
+
+			if ('download' in anchor) { //html5 A[download]
+				anchor.href = url;
+				anchor.setAttribute("download", fileName);
+				anchor.className = "download-js-link";
+				anchor.innerHTML = "downloading...";
+				anchor.style.display = "none";
+				document.body.appendChild(anchor);
+				setTimeout(function() {
+					anchor.click();
+					document.body.removeChild(anchor);
+					if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
+				}, 66);
+				return true;
+			}
+
+			// handle non-a[download] safari as best we can:
+			if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
+				if(/^data:/.test(url))	url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+				if(!window.open(url)){ // popup blocked, offer direct download:
+					if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
+				}
+				return true;
+			}
+
+			//do iframe dataURL download (old ch+FF):
+			var f = document.createElement("iframe");
+			document.body.appendChild(f);
+
+			if(!winMode && /^data:/.test(url)){ // force a mime that will download:
+				url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+			}
+			f.src=url;
+			setTimeout(function(){ document.body.removeChild(f); }, 333);
+
+		}//end saver
+
+
+
+
+		if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+			return navigator.msSaveBlob(blob, fileName);
+		}
+
+		if(self.URL){ // simple fast and modern way using Blob and URL:
+			saver(self.URL.createObjectURL(blob), true);
+		}else{
+			// handle non-Blob()+non-URL browsers:
+			if(typeof blob === "string" || blob.constructor===toString ){
+				try{
+					return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
+				}catch(y){
+					return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
+				}
+			}
+
+			// Blob but not URL support:
+			reader=new FileReader();
+			reader.onload=function(e){
+				saver(this.result);
+			};
+			reader.readAsDataURL(blob);
+		}
+		return true;
+	}; /* end download() */
+}));
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3441,7 +3574,7 @@ function createError(err, code, props) {
 
 module.exports = createError;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // originally pulled out of simple-peer
 
 module.exports = function getBrowserRTC () {
@@ -3458,7 +3591,7 @@ module.exports = function getBrowserRTC () {
   return wrtc
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // getUserMedia helper by @HenrikJoreteg used for navigator.getUserMedia shim
 var adapter = require('webrtc-adapter');
 
@@ -3535,7 +3668,7 @@ module.exports = function (constraints, cb) {
     });
 };
 
-},{"webrtc-adapter":37}],13:[function(require,module,exports){
+},{"webrtc-adapter":38}],14:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -3564,7 +3697,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -3728,7 +3861,7 @@ function plural(ms, msAbs, n, name) {
   return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (global){(function (){
 /*! queue-microtask. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 let promise
@@ -3741,7 +3874,7 @@ module.exports = typeof queueMicrotask === 'function'
     .catch(err => setTimeout(() => { throw err }, 0))
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -3795,7 +3928,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":6,"safe-buffer":32}],17:[function(require,module,exports){
+},{"_process":6,"safe-buffer":33}],18:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -3924,7 +4057,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4066,7 +4199,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":20,"./_stream_writable":22,"_process":6,"inherits":13}],19:[function(require,module,exports){
+},{"./_stream_readable":21,"./_stream_writable":23,"_process":6,"inherits":14}],20:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4106,7 +4239,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":21,"inherits":13}],20:[function(require,module,exports){
+},{"./_stream_transform":22,"inherits":14}],21:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -5233,7 +5366,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":17,"./_stream_duplex":18,"./internal/streams/async_iterator":23,"./internal/streams/buffer_list":24,"./internal/streams/destroy":25,"./internal/streams/from":27,"./internal/streams/state":29,"./internal/streams/stream":30,"_process":6,"buffer":3,"events":4,"inherits":13,"string_decoder/":35,"util":2}],21:[function(require,module,exports){
+},{"../errors":18,"./_stream_duplex":19,"./internal/streams/async_iterator":24,"./internal/streams/buffer_list":25,"./internal/streams/destroy":26,"./internal/streams/from":28,"./internal/streams/state":30,"./internal/streams/stream":31,"_process":6,"buffer":3,"events":4,"inherits":14,"string_decoder/":36,"util":2}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5435,7 +5568,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":17,"./_stream_duplex":18,"inherits":13}],22:[function(require,module,exports){
+},{"../errors":18,"./_stream_duplex":19,"inherits":14}],23:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6135,7 +6268,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":17,"./_stream_duplex":18,"./internal/streams/destroy":25,"./internal/streams/state":29,"./internal/streams/stream":30,"_process":6,"buffer":3,"inherits":13,"util-deprecate":36}],23:[function(require,module,exports){
+},{"../errors":18,"./_stream_duplex":19,"./internal/streams/destroy":26,"./internal/streams/state":30,"./internal/streams/stream":31,"_process":6,"buffer":3,"inherits":14,"util-deprecate":37}],24:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -6345,7 +6478,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":26,"_process":6}],24:[function(require,module,exports){
+},{"./end-of-stream":27,"_process":6}],25:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -6556,7 +6689,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":3,"util":2}],25:[function(require,module,exports){
+},{"buffer":3,"util":2}],26:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -6664,7 +6797,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":6}],26:[function(require,module,exports){
+},{"_process":6}],27:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -6769,12 +6902,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":17}],27:[function(require,module,exports){
+},{"../../../errors":18}],28:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -6872,7 +7005,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":17,"./end-of-stream":26}],29:[function(require,module,exports){
+},{"../../../errors":18,"./end-of-stream":27}],30:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -6900,10 +7033,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":17}],30:[function(require,module,exports){
+},{"../../../errors":18}],31:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":4}],31:[function(require,module,exports){
+},{"events":4}],32:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -6914,7 +7047,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":18,"./lib/_stream_passthrough.js":19,"./lib/_stream_readable.js":20,"./lib/_stream_transform.js":21,"./lib/_stream_writable.js":22,"./lib/internal/streams/end-of-stream.js":26,"./lib/internal/streams/pipeline.js":28}],32:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":19,"./lib/_stream_passthrough.js":20,"./lib/_stream_readable.js":21,"./lib/_stream_transform.js":22,"./lib/_stream_writable.js":23,"./lib/internal/streams/end-of-stream.js":27,"./lib/internal/streams/pipeline.js":29}],33:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -6981,7 +7114,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":3}],33:[function(require,module,exports){
+},{"buffer":3}],34:[function(require,module,exports){
  /* eslint-env node */
 'use strict';
 
@@ -7589,7 +7722,7 @@ SDPUtils.isRejected = function(mediaSection) {
 // Expose public methods.
 module.exports = SDPUtils;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*! simple-peer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 const debug = require('debug')('simple-peer')
 const getBrowserRTC = require('get-browser-rtc')
@@ -8643,7 +8776,7 @@ Peer.channelConfig = {}
 
 module.exports = Peer
 
-},{"buffer":3,"debug":8,"err-code":10,"get-browser-rtc":11,"queue-microtask":15,"randombytes":16,"readable-stream":31}],35:[function(require,module,exports){
+},{"buffer":3,"debug":8,"err-code":11,"get-browser-rtc":12,"queue-microtask":16,"randombytes":17,"readable-stream":32}],36:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8940,7 +9073,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":32}],36:[function(require,module,exports){
+},{"safe-buffer":33}],37:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -9011,7 +9144,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -9105,7 +9238,7 @@ function config (name) {
   }
 })();
 
-},{"./chrome/chrome_shim":38,"./edge/edge_shim":40,"./firefox/firefox_shim":42,"./safari/safari_shim":44,"./utils":45}],38:[function(require,module,exports){
+},{"./chrome/chrome_shim":39,"./edge/edge_shim":41,"./firefox/firefox_shim":43,"./safari/safari_shim":45,"./utils":46}],39:[function(require,module,exports){
 
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
@@ -9372,7 +9505,7 @@ module.exports = {
   shimGetUserMedia: require('./getusermedia')
 };
 
-},{"../utils.js":45,"./getusermedia":39}],39:[function(require,module,exports){
+},{"../utils.js":46,"./getusermedia":40}],40:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -9572,7 +9705,7 @@ module.exports = function() {
   }
 };
 
-},{"../utils.js":45}],40:[function(require,module,exports){
+},{"../utils.js":46}],41:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -10701,7 +10834,7 @@ module.exports = {
   shimGetUserMedia: require('./getusermedia')
 };
 
-},{"../utils":45,"./getusermedia":41,"sdp":33}],41:[function(require,module,exports){
+},{"../utils":46,"./getusermedia":42,"sdp":34}],42:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -10735,7 +10868,7 @@ module.exports = function() {
   };
 };
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -10899,7 +11032,7 @@ module.exports = {
   shimGetUserMedia: require('./getusermedia')
 };
 
-},{"../utils":45,"./getusermedia":43}],43:[function(require,module,exports){
+},{"../utils":46,"./getusermedia":44}],44:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -11062,7 +11195,7 @@ module.exports = function() {
   };
 };
 
-},{"../utils":45}],44:[function(require,module,exports){
+},{"../utils":46}],45:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -11092,7 +11225,7 @@ module.exports = {
   // shimPeerConnection: safariShim.shimPeerConnection
 };
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
