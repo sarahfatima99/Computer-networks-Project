@@ -1,0 +1,47 @@
+.navbar{
+  
+    margin-right: 70px;
+    margin-left: 70px;
+ 
+
+
+   
+}
+
+ .btn{
+ margin-top: 5px;
+} 
+
+.price{
+    margin-top: 5px;
+    padding-top: 5px;
+    padding-right: 8px;
+}
+.Hr {
+    border-top: 1px solid #bbb;
+    margin-bottom: 5px;
+  color: black;
+  }
+
+.cart-img{
+    width: 60px;
+    height: 42.078;
+}
+
+.verticle{
+    /* width:  1px;
+    height: 100%;
+border-top: 1px black;
+    color: black; */
+    border-left:   1px solid #bbb;
+    height: 40px; 
+  margin-left:10px ;
+  margin-right: 5px;
+  margin-top:0px ;
+  margin-bottom: 0px;
+    left: 50%; 
+}
+.card-body{
+    padding-bottom: 10px;
+    position: relative;
+}

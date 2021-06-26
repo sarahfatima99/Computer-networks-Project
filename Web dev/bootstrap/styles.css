@@ -1,0 +1,191 @@
+/*
+Code Refactoring
+1. Readability
+2. Modularity
+  Allows you to drill down on a specifiv section ad figure out
+  problems, or change a particular section, without affecting
+  the rest of the website
+3. Effciiency
+4. Length
+*/
+
+/*
+Hierarchy over selectors:
+1. IDs (use them sparingly)
+2. Classes
+3. HTML Elements
+Inline styles are more specific than internal or external css styles
+(but avoid them at all costs)
+Also last css rule has priority
+*/
+
+/* title section */
+body{
+   font-family: 'Poppins', sans-serif;
+    
+}
+#title{
+    background-color: #ff4c68 ;
+    color: #fff;
+}
+
+h1{
+    font-family: 'Montserrat-Bold';
+    font-weight: 100px;
+    size: 3rem;
+    line-height: 1.5;
+}
+
+h3{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 0.5px;
+  }
+h2{
+    font-family: 'Montserrat';
+    font-size: 2.2rem;
+    font-weight: lightest;
+    line-height: 1.25;
+} 
+.big-heading {
+    font-family: 'Montserrat', sans-serif;;
+    font-size: 3.5rem;
+    line-height: 1.5;
+  }
+.container-fluid{
+    padding: 3% 15% 7%;
+}
+
+body{
+   font-family: 'Poppins', sans-serif;
+    
+}
+
+/* navigation bar */
+
+.navbar{
+    padding: 0 0 5rem;
+}
+.navbar-item{
+padding: 0 18px;
+}
+
+.navebar-brand{
+    font-family: 'Ubuntu', sans-serif;
+      font-size: 2.5rem;
+      
+      color: #fff
+  }
+
+
+  
+
+  .download{
+      margin: 5% 3% 3% 0;
+  }
+  
+  .title-image{
+      width: 60%;
+      transform: rotate(25deg);
+      position:absolute;
+      margin-left:25%;
+    
+  }
+
+  /* FEATURE SECTION */
+
+  #features{
+    padding: 5% 10%;
+
+    background-color:#fff;
+    position:relative;
+    z-index:1;
+
+}
+
+  .feature-box{
+      text-align: center;
+      text-decoration-color: aqua;
+  }
+
+ 
+  p{
+      color: gray;
+  }
+  .icon{
+      color:rgb(231, 126, 142);
+      margin-bottom: 1rem;
+  }
+  
+  .icon:hover{
+      color: #ff4c68;
+
+  }
+
+  /* Testomonial section */
+
+  #testimonials{
+     background-color: rgb(231, 126, 142);
+      text-align: center;
+      color: #fff;
+      
+  }
+
+  .testimonial-image{
+      width: 15%;
+      border-radius: 100%;
+      margin: 20px;
+  }
+
+  #press{
+      background-color: rgb(231, 126, 142);
+        padding-bottom: 3%;
+        text-align: center;
+
+  }
+
+  .press-logo{
+      width: 20%;
+      margin: 20px 20px 50px;
+  }
+
+  .carousel-item{
+      padding: 7% 15%;
+  }
+
+
+  #pricing{
+      padding:100px;
+      text-align: center;
+  }
+
+    .pricing-column{
+        margin: 2% 3%;
+    }
+
+   @media (max-width:1028px ){
+    #title{
+        text-align: center;
+    }
+    .title-image{
+        position: static;
+        transform: rotate(0);
+    }
+   }
+
+   #cta{
+       text-align: center;
+       background-color:  #ff4c68;
+       color: #fff;
+       padding-top: 3%;
+       
+   }
+
+   #footer{
+       text-align: center;
+       margin-top: 5%;
+   }
+
+   .social-icon{
+       margin: 7px 10px;
+   }

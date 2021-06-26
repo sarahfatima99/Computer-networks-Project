@@ -1,0 +1,88 @@
+body{
+  
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 300px;
+    text-align: center;
+    font-family: 'Sora', sans-serif;
+  
+}
+
+/* navbar and header section */
+.header{
+    height: 400px;
+    position: relative;
+}
+.topimg{
+    height: 400px;
+    width: 100%;
+}
+.navbar{
+  
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 0px;
+    height: 80px;
+    bottom: 80px;
+    position: relative;
+   
+}
+
+.description_text{
+    font-size: small;
+    width: 23%;
+    color: rgb(214, 214, 138);
+    text-shadow: 4px 4px 5px black, 4px 4px 25px black;
+    text-align: center;
+   top: 12px;
+  font-weight: bold;
+   margin-left: 50px;
+   border: black;
+   
+}
+
+.regno{
+    font-size: smaller;
+    width: 20%;
+    color: white;
+   text-align: center;
+    position: absolute;
+    top:53px;
+    left: 82px;
+    bottom: 20px;
+
+}
+ .navbar-item{
+     color: white;
+ }
+
+
+/* Center body */
+
+.welcome{
+    position: centre;
+    background-color: yellow;
+       height: 300px;
+       width: 75%;
+       position: relative;
+       left: 17 0px;
+       margin-bottom: 20px;
+} 
+.centerimg{
+    height: 300px;
+    width: 50%;
+}
+.centerimg2{
+    height: 300px;
+    width: 50%;
+    position: absolute;
+}
+.centertext{
+ position: absolute;
+  top: 20px;
+  left: 50px;
+color: white;
+width: 35%;
+text-align: center;
+}

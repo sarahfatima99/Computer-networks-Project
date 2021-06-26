@@ -1,0 +1,41 @@
+.navbar{
+    background-color:#5DD1A3 ;
+    
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar-nav{
+    text-align: center;
+}
+.nav-link{
+    color: beige;
+    
+}
+
+li.active{
+
+padding-left: 60px;
+padding-right: 60px;
+
+}
+
+li.art{
+    padding-left:100px;
+    padding-right: 60px;
+}
+/* .hyper{
+    float: left;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+  width: 25%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
+  
+
+.nav-link:hover{
+    color: rgb(225, 235, 229);
+    
+}
